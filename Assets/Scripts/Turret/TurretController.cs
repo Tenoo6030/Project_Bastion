@@ -7,8 +7,8 @@ public class TurretController : MonoBehaviour
     [Tooltip("Reference to Scriptable Object TurretData"), SerializeField]
     private TurretData data;
 
-    [Tooltip("Reference of current turret object"), SerializeField]
-    private Transform currentTurret;
+    [Tooltip("Reference of current turret head"), SerializeField]
+    private Transform currentTurretHead;
 
     [Header("Parameters")]
 
@@ -31,20 +31,27 @@ public class TurretController : MonoBehaviour
 
     [Tooltip("Projectile movement speed in Unity units per second."), SerializeField]
     private float projectileSpeed;
-    
+
     private void Awake()
     {
         if (data == null)
         {
-            Debug.LogError("Data is null ");
-            this.enabled = false;
+            Debug.LogError("TurretController: " +
+                "TurretData reference is missing. Assign a TurretData asset to the data field in the Inspector.",
+                this
+                );
+            enabled = false;
             return;
-
         }
 
-        if (currentTurret == null)
+        if (currentTurretHead == null)
         {
-            currentTurret = data.TurretPrefab;
+            Debug.LogError("TurretController: " +
+                "Turret head reference is missing. Assign the TurretHead Transform to currentTurretHead in the Inspector.",
+                this
+                );
+            enabled = false;
+            return;
         }
 
         currentHealth = data.MaxHealth;

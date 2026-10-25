@@ -13,10 +13,10 @@ public class TurretData : ScriptableObject
 
     [Header("Parameters")]
 
-    [Tooltip("Maximum health points of the turret."), SerializeField, Range(0f, 100f)] 
+    [Tooltip("Maximum health points of the turret."), SerializeField, Range(1f, 100f)] 
     private float maxHealth;
 
-    [Tooltip("Base damage dealt by each projectile."), SerializeField, Range(0f, 50f)] 
+    [Tooltip("Base damage dealt by each projectile."), SerializeField, Range(1f, 50f)] 
     private float damage;
 
     [Tooltip("Maximum enemy detection range in Unity units."), SerializeField, Range(0f, 50f)] 

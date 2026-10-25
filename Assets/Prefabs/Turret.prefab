@@ -124,6 +124,7 @@ GameObject:
   - component: {fileID: 1500461857891698360}
   - component: {fileID: 6568702320897586719}
   - component: {fileID: 6413487991992899911}
+  - component: {fileID: 2748371213205718067}
   m_Layer: 0
   m_Name: Turret
   m_TagString: Untagged
@@ -227,6 +228,26 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!114 &2748371213205718067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2199119417564498452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 290bc2b14592fc741b5830f33dffe842, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TurretController
+  data: {fileID: 11400000, guid: 5691cf7297cdad24ea9034cb245e9303, type: 2}
+  currentTurretHead: {fileID: 4283003682930101600}
+  currentHealth: 0
+  damage: 0
+  detectionRange: 0
+  fireRate: 0
+  rotationSpeed: 0
+  projectileSpeed: 0
 --- !u!1 &2590086637411671805
 GameObject:
   m_ObjectHideFlags: 0
