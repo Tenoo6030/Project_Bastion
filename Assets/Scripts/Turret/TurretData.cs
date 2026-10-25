@@ -75,7 +75,7 @@ public class TurretData : ScriptableObject
 
     private void OnValidate()
     {
-        maxHealth = Mathf.Max(0f, maxHealth);
+        maxHealth = Mathf.Max(1f, maxHealth);
         damage = Mathf.Max(1f, damage);
         detectionRange = Mathf.Max(0f, detectionRange);
 
