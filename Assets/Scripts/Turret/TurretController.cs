@@ -36,7 +36,7 @@ public class TurretController : MonoBehaviour
     {
         if (data == null)
         {
-            Debug.LogError("TurretController: " +
+            Debug.LogError($"TurretController {name}: " +
                 "TurretData reference is missing. Assign a TurretData asset to the data field in the Inspector.",
                 this
                 );
@@ -46,7 +46,7 @@ public class TurretController : MonoBehaviour
 
         if (currentTurretHead == null)
         {
-            Debug.LogError("TurretController: " +
+            Debug.LogError($"TurretController {name}: " +
                 "Turret head reference is missing. Assign the TurretHead Transform to currentTurretHead in the Inspector.",
                 this
                 );
