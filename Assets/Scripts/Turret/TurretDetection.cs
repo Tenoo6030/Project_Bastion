@@ -9,6 +9,7 @@ public class TurretDetection : MonoBehaviour
     private float timeSinceLastScan;
     private bool isInitialized = false;
     private Collider[] colliders = new Collider[10];
+    [SerializeField] private EnemyController currentTarget;
 
     /// <summary>
     /// Initializes the turret detection settings,
@@ -80,5 +81,30 @@ public class TurretDetection : MonoBehaviour
         }
         while (needsRescan);
 
+        EnemyController closestEnemy = null;
+        float closestDistanceSqr = float.PositiveInfinity;
+        for (int i = 0; i < detectedCount; i++)
+        {
+            EnemyController enemy = colliders[i].GetComponentInParent<EnemyController>();
+            if (enemy == null)
+            {
+                continue;
+            }
+
+            float distanceSqr = (enemy.transform.position - transform.position).sqrMagnitude;
+
+            if (distanceSqr < closestDistanceSqr)
+            {
+                closestDistanceSqr = distanceSqr;
+                closestEnemy = enemy;
+            }
+
+        }
+
+        if (!ReferenceEquals(closestEnemy, currentTarget))
+        {
+            currentTarget = closestEnemy;
+
+        }
     }
 }

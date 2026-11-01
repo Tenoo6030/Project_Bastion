@@ -15,8 +15,9 @@ MonoBehaviour:
   turretName: BaseTurret
   turretPrefab: {fileID: 1530388313932166044, guid: 3ff6e83196d85cf4988941329b880421, type: 3}
   maxHealth: 100
+  detectionRange: 10
+  detectionInterval: 0.2
   damage: 25
-  detectionRange: 30
   fireRate: 0.1
   rotationSpeed: 0.1
   projectileSpeed: 0.1
