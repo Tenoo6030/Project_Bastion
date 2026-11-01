@@ -1,13 +1,14 @@
+using System;
 using UnityEngine;
 
 public class TurretDetection : MonoBehaviour
 {
-    
+    private int detectedCount;
     private float detectionRange;
-
     private float detectionInterval;
-
+    private float timeSinceLastScan;
     private bool isInitialized = false;
+    private Collider[] colliders = new Collider[10];
 
     /// <summary>
     /// Initializes the turret detection settings,
@@ -34,14 +35,15 @@ public class TurretDetection : MonoBehaviour
             return false;
         }
 
-        if (interval <0.2f || range < 0)
+        if (interval < 0.2f || range < 0)
         {
             Debug.LogError($"TurretDetection {name} : Invalid detection range or scan interval.", this);
             return false;
-        } 
+        }
 
         detectionRange = range;
         detectionInterval = interval;
+        timeSinceLastScan = interval;
 
         return isInitialized = true;
     }
@@ -52,6 +54,31 @@ public class TurretDetection : MonoBehaviour
         {
             return;
         }
+
+        timeSinceLastScan += Time.deltaTime;
+
+        if (timeSinceLastScan >= detectionInterval)
+        {
+            ScanForTargets();
+            timeSinceLastScan = 0f;
+        }
+
+    }
+
+    private void ScanForTargets()
+    {
+        bool needsRescan;
+        do
+        {
+            needsRescan = false;
+            detectedCount = Physics.OverlapSphereNonAlloc(transform.position, detectionRange, colliders);
+            if (detectedCount == colliders.Length)
+            {
+                colliders = new Collider[colliders.Length * 2];
+                needsRescan = true;
+            }
+        }
+        while (needsRescan);
 
     }
 }
