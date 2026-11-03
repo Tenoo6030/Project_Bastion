@@ -107,7 +107,7 @@ public class TurretDetection : MonoBehaviour
         for (int i = 0; i < detectedCount; i++)
         {
             EnemyController enemy = colliders[i].GetComponentInParent<EnemyController>();
-            if (enemy == null)
+            if (enemy == null || enemy.enabled == false)
             {
                 continue;
             }
