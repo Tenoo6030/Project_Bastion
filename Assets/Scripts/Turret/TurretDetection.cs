@@ -12,6 +12,18 @@ public class TurretDetection : MonoBehaviour
     [SerializeField] private EnemyController currentTarget;
 
     /// <summary>
+    /// Gets the currently detected enemy target.
+    /// Returns null if no target is available.
+    /// </summary>
+    public EnemyController CurrentTarget => currentTarget;
+
+    /// <summary>
+    /// Occurs when the current target changes.
+    /// Provides the new target, or null when no target is available.
+    /// </summary>
+    public event Action<EnemyController> OnTargetChanged;
+
+    /// <summary>
     /// Initializes the turret detection settings,
     /// including detection range and scan interval.
     /// </summary>
@@ -66,9 +78,16 @@ public class TurretDetection : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Scans the detection area for enemies and selects the nearest target.
+    /// Automatically expands the collider buffer when necessary.
+    /// Notifies subscribers when the current target changes.
+    /// </summary>
     private void ScanForTargets()
     {
         bool needsRescan;
+
+        // Expand the collider buffer and rescan until all detected colliders fit.
         do
         {
             needsRescan = false;
@@ -83,6 +102,8 @@ public class TurretDetection : MonoBehaviour
 
         EnemyController closestEnemy = null;
         float closestDistanceSqr = float.PositiveInfinity;
+
+        // Find the nearest valid enemy using squared distances.
         for (int i = 0; i < detectedCount; i++)
         {
             EnemyController enemy = colliders[i].GetComponentInParent<EnemyController>();
@@ -101,10 +122,12 @@ public class TurretDetection : MonoBehaviour
 
         }
 
-        if (!ReferenceEquals(closestEnemy, currentTarget))
+        // Compare actual references to handle destroyed Unity objects correctly.
+        // Notify subscribers only when the target changes.
+        if (!ReferenceEquals(closestEnemy, CurrentTarget))
         {
             currentTarget = closestEnemy;
-
+            OnTargetChanged?.Invoke(CurrentTarget);
         }
     }
 }

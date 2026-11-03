@@ -19,6 +19,8 @@ public class TurretController : MonoBehaviour
     [Tooltip("Current health points of the turret."), SerializeField]
     private float currentHealth;
 
+    private bool initializeDone;
+
     /// <summary>
     /// Gets the current health points of the turret.
     /// </summary>
@@ -58,7 +60,7 @@ public class TurretController : MonoBehaviour
             return;
         }
 
-        bool initializeDone = detection.Initialize(data.DetectionRange, data.DetectionInterval);
+        initializeDone = detection.Initialize(data.DetectionRange, data.DetectionInterval);
         if (!initializeDone)
         {
             Debug.LogError($"TurretController {name}: " +
@@ -72,4 +74,38 @@ public class TurretController : MonoBehaviour
         currentHealth = data.MaxHealth;
     }
 
+    private void OnEnable()
+    {
+        if (initializeDone)
+        {
+            detection.OnTargetChanged += SetTarget;
+            SetTarget(detection.CurrentTarget);
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (detection != null)
+        {
+            detection.OnTargetChanged -= SetTarget;
+        }
+    }
+
+    /// <summary>
+    /// Handles target updates received from the detection system.
+    /// </summary>
+    /// <param name="target">
+    /// The current enemy target, or null if no target is available.
+    /// </param>
+    private void SetTarget(EnemyController target)
+    {
+        if (target != null)
+        {
+            Debug.Log($"{target.name}");
+        }
+        else
+        {
+            Debug.Log($"No Target");
+        }
+    }
 }
