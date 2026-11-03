@@ -1,11 +1,15 @@
 using UnityEngine;
 
+[RequireComponent(typeof(TurretDetection))]
 public class TurretController : MonoBehaviour
 {
     [Header("Reference")]
 
     [Tooltip("Reference to Scriptable Object TurretData"), SerializeField]
     private TurretData data;
+
+    [Tooltip("Reference to TurretDetection component"), SerializeField]
+    private TurretDetection detection;
 
     [Tooltip("Reference of current turret head"), SerializeField]
     private Transform currentTurretHead;
@@ -15,25 +19,16 @@ public class TurretController : MonoBehaviour
     [Tooltip("Current health points of the turret."), SerializeField]
     private float currentHealth;
 
-    [Tooltip("Base damage dealt by each projectile."), SerializeField]
-    private float damage;
+    private bool initializeDone;
 
-    [Tooltip("Maximum enemy detection range in Unity units."), SerializeField]
-    private float detectionRange;
-
-    [Tooltip("Number of shots fired per second."), SerializeField]
-    private float fireRate;
-
-    [Header("Speed")]
-
-    [Tooltip("Turret rotation speed in degrees per second."), SerializeField]
-    private float rotationSpeed;
-
-    [Tooltip("Projectile movement speed in Unity units per second."), SerializeField]
-    private float projectileSpeed;
+    /// <summary>
+    /// Gets the current health points of the turret.
+    /// </summary>
+    public float CurrentHealth => currentHealth;
 
     private void Awake()
     {
+
         if (data == null)
         {
             Debug.LogError($"TurretController {name}: " +
@@ -54,24 +49,63 @@ public class TurretController : MonoBehaviour
             return;
         }
 
-        currentHealth = data.MaxHealth;
-        damage = data.Damage;
-        detectionRange = data.DetectionRange;
-        fireRate = data.FireRate;
-        projectileSpeed = data.ProjectileSpeed;
-        rotationSpeed = data.RotationSpeed;
+        detection = GetComponent<TurretDetection>();
+        if (detection == null)
+        {
+            Debug.LogError($"TurretController {name}: " +
+                "TurretDetection reference is missing.",
+                this
+                );
+            enabled = false;
+            return;
+        }
 
+        initializeDone = detection.Initialize(data.DetectionRange, data.DetectionInterval);
+        if (!initializeDone)
+        {
+            Debug.LogError($"TurretController {name}: " +
+                "TurretDetection initialization failed.",
+                this
+                );
+            enabled = false;
+            return;
+        }
+
+        currentHealth = data.MaxHealth;
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        Debug.Log(
-            $"current health: {currentHealth}; " +
-            $"Damage: {damage}; " +
-            $"DetectionRange: {detectionRange}; " +
-            $"FireRate: {fireRate}; " +
-            $"ProjectileSpeed: {projectileSpeed}; " +
-            $"rotationSpeed: {rotationSpeed};"
-            );
+        if (initializeDone)
+        {
+            detection.OnTargetChanged += SetTarget;
+            SetTarget(detection.CurrentTarget);
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (detection != null)
+        {
+            detection.OnTargetChanged -= SetTarget;
+        }
+    }
+
+    /// <summary>
+    /// Handles target updates received from the detection system.
+    /// </summary>
+    /// <param name="target">
+    /// The current enemy target, or null if no target is available.
+    /// </param>
+    private void SetTarget(EnemyController target)
+    {
+        if (target != null)
+        {
+            Debug.Log($"{target.name}");
+        }
+        else
+        {
+            Debug.Log($"No Target");
+        }
     }
 }
