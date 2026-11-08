@@ -19,7 +19,7 @@ public class TurretController : MonoBehaviour
     [Tooltip("Current health points of the turret."), SerializeField]
     private float currentHealth;
 
-    private bool initializeDone;
+    private bool isInitialized = false;
 
     /// <summary>
     /// Gets the current health points of the turret.
@@ -35,7 +35,7 @@ public class TurretController : MonoBehaviour
                 "TurretData reference is missing. Assign a TurretData asset to the data field in the Inspector.",
                 this
                 );
-            enabled = false;
+            gameObject.SetActive(false);
             return;
         }
 
@@ -51,14 +51,13 @@ public class TurretController : MonoBehaviour
             return;
         }
 
-        initializeDone = detection.Initialize(data.DetectionRange, data.DetectionInterval);
-        if (!initializeDone)
+        if (!detection.Initialize(data.DetectionRange, data.DetectionInterval))
         {
             Debug.LogError($"TurretController {name}: " +
                 "TurretDetection initialization failed.",
                 this
                 );
-            enabled = false;
+            gameObject.SetActive(false);
             return;
         }
         #endregion
@@ -76,8 +75,7 @@ public class TurretController : MonoBehaviour
             return;
         }
 
-        initializeDone = rotation.Initialize(data.RotationSpeed);
-        if (!initializeDone)
+        if (!rotation.Initialize(data.RotationSpeed))
         {
             Debug.LogError($"TurretController {name}: " +
                 "TurretRotation initialization failed.",
@@ -88,12 +86,14 @@ public class TurretController : MonoBehaviour
         }
         #endregion
 
+        isInitialized = true;
+
         currentHealth = data.MaxHealth;
     }
 
     private void OnEnable()
     {
-        if (initializeDone)
+        if (isInitialized)
         {
             detection.OnTargetChanged += SetTarget;
             SetTarget(detection.CurrentTarget);

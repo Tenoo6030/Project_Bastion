@@ -1,12 +1,9 @@
-using System;
 using UnityEngine;
 
 public class TurretRotation : MonoBehaviour
 {
     private float rotationSpeed;
     private bool isInitialized = false;
-
-    private Quaternion currentRotation;
 
     [SerializeField] private EnemyController currentTarget;
 
