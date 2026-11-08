@@ -11,15 +11,15 @@ public class TurretController : MonoBehaviour
     [Tooltip("Reference to TurretDetection component"), SerializeField]
     private TurretDetection detection;
 
-    [Tooltip("Reference of current turret head"), SerializeField]
-    private Transform currentTurretHead;
+    [Tooltip("Reference to TurretRotation component"), SerializeField]
+    private TurretRotation rotation;
 
     [Header("Parameters")]
 
     [Tooltip("Current health points of the turret."), SerializeField]
     private float currentHealth;
 
-    private bool initializeDone;
+    private bool isInitialized = false;
 
     /// <summary>
     /// Gets the current health points of the turret.
@@ -35,20 +35,11 @@ public class TurretController : MonoBehaviour
                 "TurretData reference is missing. Assign a TurretData asset to the data field in the Inspector.",
                 this
                 );
-            enabled = false;
+            gameObject.SetActive(false);
             return;
         }
 
-        if (currentTurretHead == null)
-        {
-            Debug.LogError($"TurretController {name}: " +
-                "Turret head reference is missing. Assign the TurretHead Transform to currentTurretHead in the Inspector.",
-                this
-                );
-            enabled = false;
-            return;
-        }
-
+        #region Detection Initialization
         detection = GetComponent<TurretDetection>();
         if (detection == null)
         {
@@ -56,27 +47,53 @@ public class TurretController : MonoBehaviour
                 "TurretDetection reference is missing.",
                 this
                 );
-            enabled = false;
+            gameObject.SetActive(false);
             return;
         }
 
-        initializeDone = detection.Initialize(data.DetectionRange, data.DetectionInterval);
-        if (!initializeDone)
+        if (!detection.Initialize(data.DetectionRange, data.DetectionInterval))
         {
             Debug.LogError($"TurretController {name}: " +
                 "TurretDetection initialization failed.",
                 this
                 );
-            enabled = false;
+            gameObject.SetActive(false);
             return;
         }
+        #endregion
+
+        #region Rotation Initialization
+
+        rotation = GetComponentInChildren<TurretRotation>();
+        if (rotation == null)
+        {
+            Debug.LogError($"TurretController {name}: " +
+                "TurretRotation reference is missing.",
+                this
+                );
+            gameObject.SetActive(false);
+            return;
+        }
+
+        if (!rotation.Initialize(data.RotationSpeed))
+        {
+            Debug.LogError($"TurretController {name}: " +
+                "TurretRotation initialization failed.",
+                this
+                );
+            gameObject.SetActive(false);
+            return;
+        }
+        #endregion
+
+        isInitialized = true;
 
         currentHealth = data.MaxHealth;
     }
 
     private void OnEnable()
     {
-        if (initializeDone)
+        if (isInitialized)
         {
             detection.OnTargetChanged += SetTarget;
             SetTarget(detection.CurrentTarget);
@@ -102,10 +119,12 @@ public class TurretController : MonoBehaviour
         if (target != null)
         {
             Debug.Log($"{target.name}");
+            rotation.SetNewTarget(target);
         }
         else
         {
             Debug.Log($"No Target");
+            rotation.SetNewTarget(target);
         }
     }
 }

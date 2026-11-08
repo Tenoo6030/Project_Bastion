@@ -19,5 +19,5 @@ MonoBehaviour:
   detectionInterval: 0.2
   damage: 25
   fireRate: 0.1
-  rotationSpeed: 0.1
+  rotationSpeed: 90
   projectileSpeed: 0.1
