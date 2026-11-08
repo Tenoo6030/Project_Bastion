@@ -11,8 +11,8 @@ public class TurretController : MonoBehaviour
     [Tooltip("Reference to TurretDetection component"), SerializeField]
     private TurretDetection detection;
 
-    [Tooltip("Reference of current turret head"), SerializeField]
-    private Transform currentTurretHead;
+    [Tooltip("Reference to TurretRotation component"), SerializeField]
+    private TurretRotation rotation;
 
     [Header("Parameters")]
 
@@ -39,16 +39,7 @@ public class TurretController : MonoBehaviour
             return;
         }
 
-        if (currentTurretHead == null)
-        {
-            Debug.LogError($"TurretController {name}: " +
-                "Turret head reference is missing. Assign the TurretHead Transform to currentTurretHead in the Inspector.",
-                this
-                );
-            enabled = false;
-            return;
-        }
-
+        #region Detection Initialization
         detection = GetComponent<TurretDetection>();
         if (detection == null)
         {
@@ -56,7 +47,7 @@ public class TurretController : MonoBehaviour
                 "TurretDetection reference is missing.",
                 this
                 );
-            enabled = false;
+            gameObject.SetActive(false);
             return;
         }
 
@@ -70,6 +61,32 @@ public class TurretController : MonoBehaviour
             enabled = false;
             return;
         }
+        #endregion
+
+        #region Rotation Initialization
+
+        rotation = GetComponentInChildren<TurretRotation>();
+        if (rotation == null)
+        {
+            Debug.LogError($"TurretController {name}: " +
+                "TurretRotation reference is missing.",
+                this
+                );
+            gameObject.SetActive(false);
+            return;
+        }
+
+        initializeDone = rotation.Initialize(data.RotationSpeed);
+        if (!initializeDone)
+        {
+            Debug.LogError($"TurretController {name}: " +
+                "TurretRotation initialization failed.",
+                this
+                );
+            gameObject.SetActive(false);
+            return;
+        }
+        #endregion
 
         currentHealth = data.MaxHealth;
     }
@@ -102,10 +119,12 @@ public class TurretController : MonoBehaviour
         if (target != null)
         {
             Debug.Log($"{target.name}");
+            rotation.SetNewTarget(target);
         }
         else
         {
             Debug.Log($"No Target");
+            rotation.SetNewTarget(target);
         }
     }
 }
