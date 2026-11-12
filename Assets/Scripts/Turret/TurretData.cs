@@ -5,41 +5,41 @@ public class TurretData : ScriptableObject
 {
     #region Base Parameters
 
-    [Tooltip("Display name of the turret."), SerializeField] 
+    [Tooltip("Display name of the turret."), SerializeField]
     private string turretName;
-    
+
     [Header("Reference")]
 
-    [Tooltip("Prefab used to instantiate the turret."), SerializeField] 
+    [Tooltip("Prefab used to instantiate the turret."), SerializeField]
     private Transform turretPrefab;
 
     [Header("Parameters")]
 
-    [Tooltip("Maximum health points of the turret."), SerializeField, Range(1f, 100f)] 
+    [Tooltip("Maximum health points of the turret."), SerializeField, Range(1f, 100f)]
     private float maxHealth;
 
     #endregion
 
     #region Detection Parameters
 
-     [Tooltip("Maximum enemy detection range in Unity units."), SerializeField, Range(0f, 50f)] 
+    [Tooltip("Maximum enemy detection range in Unity units."), SerializeField, Range(0f, 50f)]
     private float detectionRange;
 
-    [Tooltip("Time between enemy detection scans in seconds."), SerializeField, Range(0.2f,1f)]
+    [Tooltip("Time between enemy detection scans in seconds."), SerializeField, Range(0.2f, 1f)]
     private float detectionInterval;
 
     #endregion
 
     #region Combat Parameters
 
-    [Tooltip("Base damage dealt by each projectile."), SerializeField, Range(1f, 50f)] 
+    [Tooltip("Base damage dealt by each projectile."), SerializeField, Range(1f, 50f)]
     private float damage;
 
     [Tooltip("Number of shots fired per second."), SerializeField]
     private float fireRate;
 
     #endregion
-   
+
     #region Speed Parameters
     [Header("Speed")]
 
@@ -48,6 +48,13 @@ public class TurretData : ScriptableObject
 
     [Tooltip("Projectile movement speed in Unity units per second."), SerializeField]
     private float projectileSpeed;
+    #endregion
+
+    #region Aiming Parameters
+    [Header("Aiming")]
+
+    [Tooltip("Maximum allowed angle deviation from the target, in degrees."), SerializeField]
+    private float aimingTolerance;
     #endregion
 
     #region Base Properties
@@ -105,7 +112,13 @@ public class TurretData : ScriptableObject
     /// Gets Projectile movement speed in Unity units per second.
     /// </summary>
     public float ProjectileSpeed => projectileSpeed;
+    #endregion
 
+    #region Aiming Properties
+    /// <summary>
+    /// Gets the maximum allowed angle deviation from the target, in degrees.
+    /// </summary>
+    public float AimingTolerance => aimingTolerance;
     #endregion
 
     #region Validate
@@ -122,6 +135,8 @@ public class TurretData : ScriptableObject
 
         rotationSpeed = Mathf.Max(0.1f, rotationSpeed);
         projectileSpeed = Mathf.Max(0.1f, projectileSpeed);
+
+        aimingTolerance = Mathf.Max(1f, aimingTolerance);
     }
 
     #endregion

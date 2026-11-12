@@ -21,3 +21,4 @@ MonoBehaviour:
   fireRate: 0.1
   rotationSpeed: 90
   projectileSpeed: 0.1
+  aimingTolerance: 5

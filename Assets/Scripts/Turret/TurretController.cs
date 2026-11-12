@@ -75,7 +75,7 @@ public class TurretController : MonoBehaviour
             return;
         }
 
-        if (!rotation.Initialize(data.RotationSpeed))
+        if (!rotation.Initialize(data.RotationSpeed, data.AimingTolerance))
         {
             Debug.LogError($"TurretController {name}: " +
                 "TurretRotation initialization failed.",
@@ -127,4 +127,5 @@ public class TurretController : MonoBehaviour
             rotation.SetNewTarget(target);
         }
     }
+
 }
